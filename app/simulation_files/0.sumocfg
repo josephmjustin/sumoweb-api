@@ -1,0 +1,37 @@
+<configuration>
+
+  <input>
+    <net-file value="network0.xml"/>
+    <route-files value ="routes.rou.xml"/>
+    <additional-files value="edgedata.add.xml,vtypes.add.xml"/>
+    <xml-validation value="never"/>
+    </input>
+
+  <random_number>
+    <random value="true"/>
+  </random_number>
+  
+  <time>
+  	<begin value="0"/>
+  	<end value="3600"/>
+  </time>
+  <report>
+    <no-warnings value="true"/>
+    <step-log.period value="100"/>
+  </report>
+  <output>
+    <fcd-output value="fc.out.xml"/>
+  </output>
+
+  <processing>
+    <time-to-teleport value="100"/>
+    <collision.action value="teleport"/>
+    <ignore-route-errors value ="true"/>
+    <delay value="50"/>
+  </processing>
+
+  <gui>
+    <quit-on-end/>
+  </gui>
+
+</configuration>

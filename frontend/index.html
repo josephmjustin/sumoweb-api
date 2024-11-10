@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUMO Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+            background-image: linear-gradient(45deg, 
+                rgba(255,255,255,.15) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255,255,255,.15) 50%, 
+                rgba(255,255,255,.15) 75%, 
+                transparent 75%, 
+                transparent);
+            background-size: 20px 20px;
+            animation: progress-animation 1s linear infinite;
+        }
+        @keyframes progress-animation {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 20px 0;
+            }
+        }
+        .status-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .error {
+            background-color: #ffe6e6;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #ffcccc;
+        }
+        .success {
+            background-color: #e6ffe6;
+            color: #006600;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #ccffcc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #output-files {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-link {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            color: #0066cc;
+            text-decoration: none;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .file-link:hover {
+            background-color: #e9ecef;
+            border-color: #0066cc;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h3 {
+            color: #444;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .input-group input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>SUMO Simulation WebApp</h1>
+    
+    <div class="form-container">
+        <form id="upload-form" enctype="multipart/form-data">
+            <div class="input-group">
+                <label for="file">Upload ZIP file (containing SUMO configuration):</label>
+                <input type="file" id="file" name="file" accept=".zip" required>
+            </div>
+            <button type="submit" id="submit-btn">Upload & Run Simulation</button>
+        </form>
+        
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="status-text" id="status-text">Initializing...</div>
+        </div>
+    </div>
+    
+    <div id="result"></div>
+    <div id="output-files"></div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const statusText = document.getElementById('status-text');
+        const resultDiv = document.getElementById('result');
+        const outputFilesDiv = document.getElementById('output-files');
+
+        function showProgress(percent, text) {
+            progressContainer.style.display = 'block';
+            progressFill.style.width = `${percent}%`;
+            statusText.textContent = text;
+        }
+
+        function showMessage(message, type) {
+            resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function displayOutputFiles(files) {
+            if (files && files.length > 0) {
+                let html = '<h3>Output Files</h3>';
+                files.forEach(file => {
+                    html += `<a href="http://localhost:8000/download/${file}" 
+                              class="file-link" download>
+                              📄 ${file}
+                           </a>`;
+                });
+                outputFilesDiv.innerHTML = html;
+            } else {
+                outputFilesDiv.innerHTML = '<div class="error">No output files generated</div>';
+            }
+        }
+
+        async function uploadAndSimulate(formData) {
+            try {
+                // Reset UI
+                progressContainer.style.display = 'block';
+                submitBtn.disabled = true;
+                outputFilesDiv.innerHTML = '';
+                resultDiv.innerHTML = '';
+
+                // Upload file (25% of progress)
+                showProgress(0, 'Uploading file...');
+                const uploadResponse = await fetch('http://localhost:8000/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    const uploadData = await uploadResponse.json();
+                    throw new Error(uploadData.message || 'Error uploading file');
+                }
+
+                // Start simulation (25% to 90% of progress)
+                showProgress(25, 'Running simulation...');
+                
+                // Simulate progress during simulation
+                let progress = 25;
+                const progressInterval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += 1;
+                        showProgress(progress, 'Running simulation...');
+                    }
+                }, 1000);
+
+                const simResponse = await fetch('http://localhost:8000/run_simulation/');
+                clearInterval(progressInterval);
+                
+                const simData = await simResponse.json();
+
+                if (!simResponse.ok) {
+                    throw new Error(simData.message || 'Error running simulation');
+                }
+
+                // Show completion
+                showProgress(100, 'Simulation completed!');
+                showMessage('Simulation completed successfully!', 'success');
+
+                // Display output files
+                displayOutputFiles(simData.output_files);
+
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+                showProgress(100, 'Error occurred');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showMessage('Please select a file', 'error');
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                showMessage('Please upload a ZIP file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            await uploadAndSimulate(formData);
+        });
+    </script>
+</body>
+</html>

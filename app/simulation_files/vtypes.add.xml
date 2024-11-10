@@ -1,0 +1,10 @@
+<vTypeDistribution id= "vehicle">
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="CAR"  lcTurnAlignmentDistance="50.000" length="4.3" sigma="0.5" speedFactor="1" tau="1" vClass="passenger" probability="1"/>
+        <!-- <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar1"  lcTurnAlignmentDistance="50.000" length="4.890" sigma="0.801" speedFactor="1" tau="1.018" vClass="passenger" probability="0.15"/>
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar2"  lcTurnAlignmentDistance="50.000" length="4.369" sigma="0.574" speedFactor="0.766" tau="1.047" vClass="passenger" probability="0.15"/>
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar3"  lcTurnAlignmentDistance="50.000" length="4.529" sigma="0.393" speedFactor="1" tau="1.031" vClass="passenger" probability="0.15"/>
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar4"  lcTurnAlignmentDistance="50.000" length="4.223" sigma="0.430" speedFactor="1" tau="1.002" vClass="passenger" probability="0.13"/>
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar5"  lcTurnAlignmentDistance="50.000" length="4.630" sigma="0.456" speedFactor="1" tau="1.074" vClass="passenger" probability="0.12"/>
+        <vType accel="2.900" carFollowModel="Krauss" color="green" decel="7.500" id="vehDistCar6"  lcTurnAlignmentDistance="50.000" length="4.198" sigma="0.655" speedFactor="1" tau="1.093" vClass="passenger" probability="0.15"/>
+ -->
+  </vTypeDistribution>

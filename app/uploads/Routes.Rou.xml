@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-11-03 13:01:24 by Eclipse SUMO marouter Version 1.19.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/marouterConfiguration.xsd">
+
+    <input>
+        <net-file value="network0.xml"/>
+        <additional-files value="taz.add.xml"/>
+        <route-files value="trips.xml"/>
+    </input>
+
+    <output>
+        <output-file value="Routes.Rou.xml"/>
+    </output>
+
+    <processing>
+        <assignment-method value="SUE"/>
+    </processing>
+
+    <report>
+        <verbose value="true"/>
+        <log value="log_maroute.log"/>
+        <ignore-errors value="true"/>
+    </report>
+
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vehicle id="3" depart="0.08" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="1" depart="0.35" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="12" depart="0.42" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="14" depart="0.45" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="16" depart="0.49" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="2" depart="0.59" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="13" depart="1.15" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="17" depart="1.35" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="10" depart="1.40" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="0" depart="1.67" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="15" depart="1.79" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="7" depart="1.99" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="4" depart="2.46" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="11" depart="2.72" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="18" depart="2.87" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="6" depart="2.93" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="8" depart="2.99" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="5" depart="3.31" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="19" depart="3.34" type="vehicle" fromTaz="taz_1" toTaz="taz_0" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="-155448017#4 -155448017#2 -155448017#1 -155448017#0"/>
+        </routeDistribution>
+    </vehicle>
+    <vehicle id="9" depart="3.45" type="vehicle" fromTaz="taz_0" toTaz="taz_1" departLane="free" departSpeed="max">
+        <routeDistribution>
+            <route cost="24.17" probability="10.00000000" edges="155448017#0 155448017#1 155448017#2 155448017#4"/>
+        </routeDistribution>
+    </vehicle>
+</routes>
