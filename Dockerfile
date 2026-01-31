@@ -34,20 +34,31 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install FastAPI and Uvicorn
-RUN pip install fastapi uvicorn python-multipart
-
 # Set SUMO_HOME environment variable
 ENV SUMO_HOME=/usr/share/sumo
+ENV PATH="${PATH}:${SUMO_HOME}/bin"
 
 # Set working directory
 WORKDIR /workspace
 
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
+
 # Copy the FastAPI app to the container
 COPY app /workspace/app
 
+# Create uploads directory
+RUN mkdir -p /workspace/uploads && chmod 777 /workspace/uploads
+
 # Expose the FastAPI API port
 EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 # Run FastAPI with Uvicorn
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

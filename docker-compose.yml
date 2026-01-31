@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  sumo-api:
+    build: .
+    container_name: sumo-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/workspace/uploads
+    environment:
+      - DEBUG=False
+      - LOG_LEVEL=INFO
+      - SUMO_HOME=/usr/share/sumo
+    restart: unless-stopped
