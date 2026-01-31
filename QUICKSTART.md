@@ -1,73 +1,146 @@
 # Quick Start Guide
 
-## Start the API
+## 1. Start the API
 
-### Option 1: Docker Compose (Easiest)
+### Option A: Docker Compose (Easiest)
 ```bash
 docker-compose up --build
 ```
 
-### Option 2: Docker
+### Option B: Docker
 ```bash
 docker build -t sumo-api .
 docker run -p 8000:8000 sumo-api
 ```
 
-### Option 3: Local Python
+### Option C: Local Python
 ```bash
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-## Verify It's Running
+## 2. Test the API
 
-1. Open browser: http://localhost:8000
-2. Check health: http://localhost:8000/health
-3. View API docs: http://localhost:8000/docs
+### Using the Web Interface (Recommended)
 
-## Test the API
+**Open the modern web interface:**
 
-### 1. Upload Simulation Files
+1. Simply open `frontend/index.html` in your browser
+   
+   OR serve it with:
+   ```bash
+   python -m http.server 8080 --directory frontend
+   ```
+   Then visit: http://localhost:8080
+
+2. **Drag and drop** your ZIP file or click to browse
+
+3. Click **"Run Simulation"** button
+
+4. Watch the **progress bar** as your simulation runs
+
+5. **Download** output files when complete
+
+### Using cURL
+
+**Upload simulation files:**
 ```bash
 curl -X POST "http://localhost:8000/upload/" \
   -H "Content-Type: multipart/form-data" \
-  -F "file=@your_simulation.zip"
+  -F "file=@simulation.zip"
 ```
 
-### 2. Run Simulation
+**Run simulation:**
 ```bash
 curl "http://localhost:8000/run_simulation/"
 ```
 
-### 3. List Output Files
+**List output files:**
 ```bash
 curl "http://localhost:8000/output_files"
 ```
 
-### 4. Download Output
+**Download output:**
 ```bash
 curl "http://localhost:8000/download/edgedata.out.xml" -o output.xml
 ```
 
-## Using the Frontend
+### Using Swagger UI
 
-1. Open `frontend/index.html` in browser
-2. Upload your ZIP file
-3. Click "Run Simulation"
-4. Download results
+Visit: http://localhost:8000/docs
+
+- Interactive API documentation
+- Test all endpoints directly
+- See request/response examples
+
+## 3. Verify It's Running
+
+**Check health:**
+```bash
+curl http://localhost:8000/health
+```
+
+**Check API info:**
+```bash
+curl http://localhost:8000
+```
+
+**View logs:**
+```bash
+docker-compose logs -f sumo-api
+```
 
 ## Common Issues
 
-**Can't access localhost:8000?**
+### Can't access localhost:8000?
+
+✅ **Solutions:**
 - Check container is running: `docker ps`
-- Check logs: `docker-compose logs`
+- View logs: `docker-compose logs`
 - Try: http://127.0.0.1:8000
 
-**Simulation fails?**
-- Ensure ZIP contains `0.sumocfg`
-- Check SUMO files are valid
-- View logs for errors
+### Port already in use?
 
-**Port already in use?**
-- Change port in docker-compose.yml
-- Or use: `docker-compose up -p 8001:8000`
+✅ **Solutions:**
+- Change port in `docker-compose.yml` to `8001:8000`
+- Update `frontend/index.html`: `const API_BASE = 'http://localhost:8001';`
+
+### Simulation fails?
+
+✅ **Check:**
+- ZIP contains `0.sumocfg` file
+- SUMO configuration files are valid
+- View detailed errors in API logs
+
+### CORS errors in browser?
+
+✅ **Solutions:**
+- Ensure API is running on `localhost:8000`
+- Check CORS settings in `app/core/config.py`
+- Serve frontend via HTTP server (not file://)
+
+## Next Steps
+
+- Read full documentation in `README.md`
+- Customize settings in `app/core/config.py`
+- Add your own SUMO simulation files
+- Deploy to production using Docker
+
+## Example Files
+
+Your ZIP should contain:
+```
+simulation.zip
+├── 0.sumocfg          # Main config
+├── network0.xml       # Road network
+├── Routes.Rou.xml     # Vehicle routes
+├── vtypes.add.xml     # Vehicle types (optional)
+└── edgedata.add.xml   # Edge data (optional)
+```
+
+## Getting Help
+
+- Check logs: `docker-compose logs -f`
+- API docs: http://localhost:8000/docs
+- Health check: http://localhost:8000/health
+- SUMO docs: https://sumo.dlr.de/docs/

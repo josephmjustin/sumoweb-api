@@ -3,266 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUMO Simulation</title>
+    <title>SUMO Traffic Simulator</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
         }
-        .form-container {
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .progress-container {
-            margin: 20px 0;
-            display: none;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .progress-fill {
-            height: 100%;
-            background-color: #4CAF50;
-            width: 0%;
-            transition: width 0.5s ease-in-out;
-            background-image: linear-gradient(45deg, 
-                rgba(255,255,255,.15) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255,255,255,.15) 50%, 
-                rgba(255,255,255,.15) 75%, 
-                transparent 75%, 
-                transparent);
-            background-size: 20px 20px;
-            animation: progress-animation 1s linear infinite;
-        }
-        @keyframes progress-animation {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 20px 0;
-            }
-        }
-        .status-text {
-            margin-top: 10px;
+
+        .header {
             text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
-        .error {
-            background-color: #ffe6e6;
-            color: #cc0000;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #ffcccc;
-        }
-        .success {
-            background-color: #e6ffe6;
-            color: #006600;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border: 1px solid #ccffcc;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+            margin-bottom: 3rem;
             color: white;
-            border: none;
-            border-radius: 4px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .upload-section {
+            position: relative;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-label {
+            flex: 1;
+            padding: 1.5rem;
+            background: var(--light);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
             cursor: pointer;
-            margin: 5px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #output-files {
-            margin-top: 20px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .file-link {
-            display: block;
-            margin: 10px 0;
-            padding: 10px;
-            color: #0066cc;
-            text-decoration: none;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
+            text-align: center;
             transition: all 0.3s ease;
         }
-        .file-link:hover {
-            background-color: #e9ecef;
-            border-color: #0066cc;
+
+        .file-input-label:hover {
+            background: #f1f5f9;
+            border-color: var(--primary);
         }
-        h1 {
-            color: #333;
+
+        .file-input-label.has-file {
+            border-color: var(--secondary);
+            background: #f0fdf4;
+        }
+
+        .file-input-label .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-label .text {
+            font-size: 1rem;
+            color: var(--gray);
+        }
+
+        .file-name {
+            display: none;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .file-input-label.has-file .file-name {
+            display: block;
+        }
+
+        .file-input-label.has-file .text {
+            display: none;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-container.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .status-text {
             text-align: center;
-            margin-bottom: 30px;
+            color: var(--gray);
+            font-weight: 500;
         }
-        h3 {
-            color: #444;
-            margin-bottom: 15px;
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
         }
-        .input-group {
-            margin-bottom: 20px;
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        .input-group label {
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .output-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .output-section.show {
             display: block;
-            margin-bottom: 10px;
-            color: #555;
         }
-        .input-group input[type="file"] {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #fff;
+
+        .output-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .output-header h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .output-header .badge {
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .file-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            background: var(--light);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .file-item:hover {
+            background: #f1f5f9;
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+        }
+
+        .file-details h4 {
+            color: var(--dark);
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-details p {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .download-btn {
+            padding: 0.5rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .file-input-wrapper {
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>SUMO Simulation WebApp</h1>
-    
-    <div class="form-container">
-        <form id="upload-form" enctype="multipart/form-data">
-            <div class="input-group">
-                <label for="file">Upload ZIP file (containing SUMO configuration):</label>
-                <input type="file" id="file" name="file" accept=".zip" required>
+    <div class="container">
+        <div class="header">
+            <h1>🚦 SUMO Traffic Simulator</h1>
+            <p>Upload, simulate, and analyze urban traffic patterns</p>
+        </div>
+
+        <div class="card upload-section">
+            <form id="upload-form">
+                <div class="file-input-wrapper">
+                    <label for="file" class="file-input-label" id="file-label">
+                        <div class="icon">📦</div>
+                        <div class="text">Drop your ZIP file here or click to browse</div>
+                        <div class="file-name" id="file-name"></div>
+                    </label>
+                    <input type="file" id="file" name="file" accept=".zip" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                    <span>🚀</span>
+                    <span>Run Simulation</span>
+                </button>
+            </form>
+
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="status-text" id="status-text">Initializing...</div>
             </div>
-            <button type="submit" id="submit-btn">Upload & Run Simulation</button>
-        </form>
-        
-        <div class="progress-container" id="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+
+            <div id="result"></div>
+        </div>
+
+        <div class="card output-section" id="output-section">
+            <div class="output-header">
+                <h3>📊 Simulation Results</h3>
+                <span class="badge" id="file-count">0 files</span>
             </div>
-            <div class="status-text" id="status-text">Initializing...</div>
+            <div class="file-list" id="file-list"></div>
         </div>
     </div>
-    
-    <div id="result"></div>
-    <div id="output-files"></div>
 
     <script>
-        const form = document.getElementById('upload-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const progressContainer = document.getElementById('progress-container');
-        const progressFill = document.getElementById('progress-fill');
-        const statusText = document.getElementById('status-text');
-        const resultDiv = document.getElementById('result');
-        const outputFilesDiv = document.getElementById('output-files');
+        const API_BASE = 'http://localhost:8000';
+        
+        const elements = {
+            form: document.getElementById('upload-form'),
+            fileInput: document.getElementById('file'),
+            fileLabel: document.getElementById('file-label'),
+            fileName: document.getElementById('file-name'),
+            submitBtn: document.getElementById('submit-btn'),
+            progressContainer: document.getElementById('progress-container'),
+            progressFill: document.getElementById('progress-fill'),
+            statusText: document.getElementById('status-text'),
+            resultDiv: document.getElementById('result'),
+            outputSection: document.getElementById('output-section'),
+            fileList: document.getElementById('file-list'),
+            fileCount: document.getElementById('file-count')
+        };
+
+        // File input handling
+        elements.fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                elements.fileLabel.classList.add('has-file');
+                elements.fileName.textContent = `📄 ${file.name}`;
+            }
+        });
+
+        // Drag and drop
+        elements.fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            elements.fileLabel.style.borderColor = 'var(--primary)';
+        });
+
+        elements.fileLabel.addEventListener('dragleave', () => {
+            elements.fileLabel.style.borderColor = 'var(--border)';
+        });
+
+        elements.fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.fileLabel.style.borderColor = 'var(--border)';
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.zip')) {
+                elements.fileInput.files = e.dataTransfer.files;
+                elements.fileLabel.classList.add('has-file');
+                elements.fileName.textContent = `📄 ${file.name}`;
+            }
+        });
 
         function showProgress(percent, text) {
-            progressContainer.style.display = 'block';
-            progressFill.style.width = `${percent}%`;
-            statusText.textContent = text;
+            elements.progressContainer.classList.add('show');
+            elements.progressFill.style.width = `${percent}%`;
+            elements.statusText.textContent = text;
+        }
+
+        function hideProgress() {
+            elements.progressContainer.classList.remove('show');
         }
 
         function showMessage(message, type) {
-            resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            const icon = type === 'success' ? '✅' : '❌';
+            elements.resultDiv.innerHTML = `
+                <div class="alert alert-${type}">
+                    <span class="alert-icon">${icon}</span>
+                    <span>${message}</span>
+                </div>
+            `;
         }
 
         function displayOutputFiles(files) {
-            if (files && files.length > 0) {
-                let html = '<h3>Output Files</h3>';
-                files.forEach(file => {
-                    html += `<a href="http://localhost:8000/download/${file}" 
-                              class="file-link" download>
-                              📄 ${file}
-                           </a>`;
-                });
-                outputFilesDiv.innerHTML = html;
-            } else {
-                outputFilesDiv.innerHTML = '<div class="error">No output files generated</div>';
+            if (!files || files.length === 0) {
+                elements.fileList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>No output files generated</p>
+                    </div>
+                `;
+                return;
             }
+
+            elements.outputSection.classList.add('show');
+            elements.fileCount.textContent = `${files.length} file${files.length > 1 ? 's' : ''}`;
+            
+            elements.fileList.innerHTML = files.map(file => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-icon">📄</div>
+                        <div class="file-details">
+                            <h4>${file}</h4>
+                            <p>SUMO Output File</p>
+                        </div>
+                    </div>
+                    <a href="${API_BASE}/download/${file}" 
+                       class="download-btn" 
+                       download>
+                        <span>⬇️</span>
+                        <span>Download</span>
+                    </a>
+                </div>
+            `).join('');
         }
 
         async function uploadAndSimulate(formData) {
             try {
-                // Reset UI
-                progressContainer.style.display = 'block';
-                submitBtn.disabled = true;
-                outputFilesDiv.innerHTML = '';
-                resultDiv.innerHTML = '';
+                elements.submitBtn.disabled = true;
+                elements.outputSection.classList.remove('show');
+                elements.resultDiv.innerHTML = '';
 
-                // Upload file (25% of progress)
-                showProgress(0, 'Uploading file...');
-                const uploadResponse = await fetch('http://localhost:8000/upload/', {
+                // Upload
+                showProgress(0, 'Uploading files...');
+                const uploadRes = await fetch(`${API_BASE}/upload/`, {
                     method: 'POST',
                     body: formData
                 });
 
-                if (!uploadResponse.ok) {
-                    const uploadData = await uploadResponse.json();
-                    throw new Error(uploadData.message || 'Error uploading file');
+                if (!uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    throw new Error(data.detail || 'Upload failed');
                 }
 
-                // Start simulation (25% to 90% of progress)
-                showProgress(25, 'Running simulation...');
-                
-                // Simulate progress during simulation
-                let progress = 25;
-                const progressInterval = setInterval(() => {
-                    if (progress < 90) {
-                        progress += 1;
+                showProgress(25, 'Files uploaded successfully');
+                await new Promise(r => setTimeout(r, 500));
+
+                // Simulate
+                showProgress(30, 'Starting simulation...');
+                let progress = 30;
+                const interval = setInterval(() => {
+                    if (progress < 85) {
+                        progress += Math.random() * 5;
                         showProgress(progress, 'Running simulation...');
                     }
-                }, 1000);
+                }, 800);
 
-                const simResponse = await fetch('http://localhost:8000/run_simulation/');
-                clearInterval(progressInterval);
-                
-                const simData = await simResponse.json();
+                const simRes = await fetch(`${API_BASE}/run_simulation/`);
+                clearInterval(interval);
 
-                if (!simResponse.ok) {
-                    throw new Error(simData.message || 'Error running simulation');
+                const simData = await simRes.json();
+
+                if (!simRes.ok) {
+                    throw new Error(simData.detail || 'Simulation failed');
                 }
 
-                // Show completion
-                showProgress(100, 'Simulation completed!');
-                showMessage('Simulation completed successfully!', 'success');
+                showProgress(100, 'Simulation completed! ✨');
+                await new Promise(r => setTimeout(r, 500));
 
-                // Display output files
+                showMessage('Simulation completed successfully!', 'success');
                 displayOutputFiles(simData.output_files);
 
+                setTimeout(hideProgress, 2000);
+
             } catch (error) {
-                showMessage(`Error: ${error.message}`, 'error');
                 showProgress(100, 'Error occurred');
+                showMessage(error.message, 'error');
+                setTimeout(hideProgress, 3000);
             } finally {
-                submitBtn.disabled = false;
+                elements.submitBtn.disabled = false;
             }
         }
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
+        elements.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            const fileInput = document.getElementById('file');
-            const file = fileInput.files[0];
-
+            const file = elements.fileInput.files[0];
             if (!file) {
                 showMessage('Please select a file', 'error');
                 return;
@@ -275,9 +626,14 @@
 
             const formData = new FormData();
             formData.append('file', file);
-
             await uploadAndSimulate(formData);
         });
+
+        // Check API health on load
+        fetch(`${API_BASE}/health`)
+            .then(res => res.json())
+            .then(data => console.log('✅ API Status:', data))
+            .catch(() => console.warn('⚠️ API not reachable'));
     </script>
 </body>
 </html>

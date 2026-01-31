@@ -7,6 +7,7 @@ FastAPI-based web service for running SUMO (Simulation of Urban MObility) traffi
 - ✅ Upload ZIP files containing SUMO simulation configurations
 - ✅ Run SUMO simulations via REST API
 - ✅ Download simulation output files
+- ✅ Modern web interface with drag & drop support
 - ✅ Docker containerized deployment
 - ✅ CORS enabled for frontend integration
 - ✅ Comprehensive logging
@@ -26,7 +27,7 @@ sumoweb-api/
 │   │   └── sumo_runner.py     # SUMO execution logic
 │   └── main.py                # FastAPI application entry
 ├── frontend/                   # Frontend files
-│   └── index.html             # Web interface
+│   └── index.html             # Modern web interface
 ├── uploads/                    # Upload directory (auto-created)
 ├── Dockerfile                  # Docker build configuration
 ├── docker-compose.yml          # Docker compose setup
@@ -44,17 +45,13 @@ sumoweb-api/
 
 ### Using Docker (Recommended)
 
-1. **Clone the repository**
-   ```bash
-   cd C:\Users\justi\Work\Personal\sumoweb\sumoweb-api
-   ```
-
-2. **Build and run with Docker Compose**
+1. **Build and run with Docker Compose**
    ```bash
    docker-compose up --build
    ```
 
-3. **Access the API**
+2. **Access the application**
+   - Web Interface: Open `frontend/index.html` in your browser
    - API: http://localhost:8000
    - API Docs: http://localhost:8000/docs
    - Health Check: http://localhost:8000/health
@@ -81,6 +78,77 @@ docker run -p 8000:8000 -v ./uploads:/workspace/uploads sumo-api
    ```bash
    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
+
+## Testing the API
+
+### Option 1: Web Interface (Recommended)
+
+1. **Start the API server** (using Docker or locally as shown above)
+
+2. **Open the web interface**
+   
+   Simply open `frontend/index.html` in your browser:
+   ```bash
+   # Windows
+   start frontend/index.html
+   
+   # macOS
+   open frontend/index.html
+   
+   # Linux
+   xdg-open frontend/index.html
+   ```
+   
+   Or serve it with Python's HTTP server:
+   ```bash
+   # From project root
+   python -m http.server 8080 --directory frontend
+   ```
+   Then visit: http://localhost:8080
+
+3. **Use the interface**
+   - Drag and drop your ZIP file or click to browse
+   - Click "Run Simulation" button
+   - Watch the progress bar as simulation runs
+   - Download output files when complete
+
+### Option 2: Using cURL
+
+#### Upload and Extract ZIP
+```bash
+curl -X POST "http://localhost:8000/upload/" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@simulation.zip"
+```
+
+#### Run Simulation
+```bash
+curl "http://localhost:8000/run_simulation/"
+```
+
+#### List Output Files
+```bash
+curl "http://localhost:8000/output_files"
+```
+
+#### Download Output File
+```bash
+curl "http://localhost:8000/download/edgedata.out.xml" -o output.xml
+```
+
+### Option 3: Using Postman or Thunder Client
+
+1. Import the API endpoints
+2. Upload: POST to `http://localhost:8000/upload/` with file in form-data
+3. Simulate: GET to `http://localhost:8000/run_simulation/`
+4. Download: GET to `http://localhost:8000/download/{filename}`
+
+### Option 4: Interactive API Documentation
+
+Visit http://localhost:8000/docs to use Swagger UI:
+- Test all endpoints interactively
+- See request/response schemas
+- Try different parameters
 
 ## API Endpoints
 
@@ -150,6 +218,32 @@ GET /health
 }
 ```
 
+#### Root Endpoint
+```http
+GET /
+```
+
+**Response:**
+```json
+{
+  "name": "SUMO Web API",
+  "version": "1.0.0",
+  "status": "running"
+}
+```
+
+## Web Interface Features
+
+The modern web interface (`frontend/index.html`) includes:
+
+- **🎨 Beautiful Design**: Modern gradient background with card-based layout
+- **📦 Drag & Drop**: Simply drag your ZIP file onto the upload area
+- **📊 Progress Tracking**: Real-time progress bar with status updates
+- **✨ Animations**: Smooth transitions and visual feedback
+- **📱 Responsive**: Works perfectly on desktop, tablet, and mobile
+- **⬇️ Easy Downloads**: One-click download for all output files
+- **🚀 No Build Required**: Pure HTML/CSS/JavaScript, no dependencies
+
 ## Configuration
 
 ### Environment Variables
@@ -189,31 +283,32 @@ simulation.zip
 └── edgedata.add.xml
 ```
 
-## Frontend Integration
-
-Open `frontend/index.html` in a browser or serve it via a web server:
-
-```bash
-# Simple HTTP server
-python -m http.server 8080 --directory frontend
-```
-
-Then access: http://localhost:8080
-
 ## Troubleshooting
 
+### Cannot Access Web Interface
+
+**Problem:** Frontend can't connect to API (CORS errors)
+
+**Solution:** Ensure the API is running on `localhost:8000` and check browser console for errors.
+
 ### Port Already in Use
+
 ```bash
 # Change port in docker-compose.yml or use:
 docker-compose up -p 8001:8000
+
+# Then update API_BASE in frontend/index.html to:
+const API_BASE = 'http://localhost:8001';
 ```
 
 ### Upload Directory Permissions
+
 ```bash
 chmod 777 uploads/
 ```
 
 ### SUMO Not Found
+
 Ensure SUMO_HOME environment variable is set correctly:
 ```bash
 echo $SUMO_HOME
@@ -221,12 +316,20 @@ which sumo
 ```
 
 ### Docker Build Issues
+
 ```bash
 # Clean build
 docker-compose down
 docker system prune -a
 docker-compose up --build
 ```
+
+### File Upload Fails
+
+- Check file is a valid ZIP
+- Ensure ZIP contains `0.sumocfg`
+- Verify file size is under 100MB
+- Check API logs for detailed errors
 
 ## Development
 
@@ -245,11 +348,17 @@ black app/
 flake8 app/
 ```
 
-## Logs
+### Viewing Logs
 
-View application logs:
 ```bash
+# Docker Compose
 docker-compose logs -f sumo-api
+
+# Docker
+docker logs -f <container_id>
+
+# Local
+# Logs appear in terminal where uvicorn is running
 ```
 
 ## Security Notes
@@ -258,6 +367,38 @@ docker-compose logs -f sumo-api
 - Add authentication for sensitive endpoints
 - Implement file size validation
 - Use HTTPS in production
+- Consider rate limiting for public deployments
+
+## Deployment to Production
+
+1. **Update CORS settings** in `app/core/config.py`
+2. **Set environment variables** properly
+3. **Use a reverse proxy** (nginx, Traefik)
+4. **Enable HTTPS**
+5. **Add authentication** if needed
+6. **Monitor logs and metrics**
+
+## Example Workflow
+
+1. **Start the API**
+   ```bash
+   docker-compose up
+   ```
+
+2. **Open the web interface**
+   - Open `frontend/index.html` in your browser
+
+3. **Upload your simulation**
+   - Drag your ZIP file containing SUMO config
+   - Click "Run Simulation"
+
+4. **Monitor progress**
+   - Watch the animated progress bar
+   - See real-time status updates
+
+5. **Download results**
+   - Click download on any output file
+   - Files are saved to your downloads folder
 
 ## License
 
@@ -269,4 +410,13 @@ For issues and questions:
 - GitHub Issues: [Create an issue]
 - SUMO Documentation: https://sumo.dlr.de/docs/
 
+## Changelog
 
+### v1.0.0 (2025-01-31)
+- Initial release
+- Modern web interface with drag & drop
+- File upload and extraction
+- SUMO simulation execution
+- Output file management
+- Docker support
+- Comprehensive error handling
